@@ -204,7 +204,7 @@ const copyPassword = async (pwd) => {
 // =========================================================================
 export default function App() {
   
-  // State manajemen yang mudah dipahami (mahasiswa semester 4)
+  // State manajemen aplikasi
   const [passwordType, setPasswordType] = useState('password'); // tipe: 'password' | 'pin' | 'token'
   const [passwordLength, setPasswordLength] = useState(16);     // panjang stabil untuk generator
   const [displayLength, setDisplayLength] = useState(16);       // panjang realtime untuk kelancaran UI
