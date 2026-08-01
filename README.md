@@ -8,19 +8,24 @@ nilai acak di perangkat lalu menilai kekuatannya berdasarkan entropi.
 **Identitas aplikasi (Android):** `ac.id.mahardika.devpass`
 **Versi:** 1.0.0
 
+> Cara memakai aplikasinya ada di [Panduan Penggunaan](PANDUAN.md).
+
 ## Fitur
 
-- **Tiga tipe keluaran** dengan rentang panjangnya masing-masing (lihat tabel di bawah).
-- **Sumber acak kriptografis** melalui `expo-crypto` (bukan `Math.random`), dengan
-  *rejection sampling* agar tidak ada karakter yang berpeluang lebih besar muncul.
-- **Jaminan komposisi**: minimal satu karakter dari setiap kategori yang aktif.
-- **Analisis kekuatan berbasis entropi**: nilai bit, tingkat (Lemah → Sangat Kuat),
-  dan perkiraan waktu bobol dengan asumsi 10 miliar tebakan per detik.
-- **Pengatur panjang ganda**: penggeser untuk perubahan cepat, tombol `−` / `+`
-  untuk penyetelan presisi.
-- **Riwayat 8 hasil terakhir**; ketuk satu baris untuk menyalinnya kembali.
-- **Salin sekali ketuk** ke papan klip dengan notifikasi dan umpan balik getar.
-- Antarmuka gelap dengan aksen warna resmi universitas dan penanganan *safe area*.
+### Pembangkitan
+
+- **Tiga tipe keluaran** — kata sandi, PIN numerik, dan token berformat serial
+  (`AB3K-X92P-Q8TR`), masing-masing dengan rentang panjang sendiri.
+- **Sumber acak kriptografis** melalui `expo-crypto` yang meneruskan permintaan
+  ke penyedia acak sistem operasi, bukan `Math.random`.
+- **Pengambilan tanpa bias** dengan *rejection sampling*, sehingga tidak ada
+  karakter yang berpeluang lebih besar muncul daripada yang lain.
+- **Kolam entropi 1024 byte** — membangkitkan 64 karakter hanya butuh satu
+  panggilan native.
+- **Jaminan komposisi** — minimal satu karakter dari setiap kategori yang aktif,
+  lalu seluruh hasil diacak ulang dengan Fisher-Yates.
+- **Penyesuaian panjang otomatis** saat berpindah tipe; panjang token selalu
+  dinormalkan ke kelipatan empat.
 
 | Tipe | Rentang | Langkah | Kumpulan karakter |
 | --- | --- | --- | --- |
@@ -28,8 +33,84 @@ nilai acak di perangkat lalu menilai kekuatannya berdasarkan entropi.
 | PIN | 4–12 | 1 | `0-9` |
 | Token | 8–32 | 4 | `A-Z0-9`, dipisah `-` tiap 4 karakter |
 
-Kategori karakter terakhir yang aktif tidak dapat dimatikan, sehingga aplikasi
-tidak pernah berada dalam keadaan tanpa keluaran.
+### Analisis kekuatan
+
+- **Entropi sesungguhnya** dihitung sebagai `panjang × log2(ukuran pool)` dari
+  karakter yang benar-benar terpakai, bukan skor poin buatan.
+- **Empat tingkat** mengikuti skala entropi yang lazim: Lemah (<36 bit), Sedang
+  (36–59), Kuat (60–79), Sangat Kuat (≥80).
+- **Perkiraan waktu bobol** dengan asumsi serangan luring 10 miliar tebakan per
+  detik, disajikan dalam satuan yang mudah dibaca.
+- Penilaian dihitung dari isi nilai itu sendiri, sehingga entri riwayat pun
+  dapat dinilai tanpa menyimpan konfigurasinya.
+
+### Antarmuka
+
+- **Pewarnaan per kelas karakter** pada kartu hasil — huruf putih, angka emas,
+  simbol oranye — dengan ukuran huruf yang menyesuaikan panjang nilai.
+- **Pengatur panjang ganda**: penggeser untuk perubahan cepat dan tombol
+  `−` / `+` untuk penyetelan presisi, lengkap dengan keadaan nonaktif di batas
+  rentang.
+- **Riwayat 8 hasil terakhir** dengan penanda tipe; ketuk satu baris untuk
+  menyalinnya kembali, atau kosongkan seluruhnya.
+- **Salin sekali ketuk** ke papan klip disertai notifikasi beranimasi dan umpan
+  balik getar.
+- **Pencegahan keadaan tidak sah** — kategori karakter terakhir tidak dapat
+  dimatikan, sehingga aplikasi tidak pernah menghasilkan nilai kosong.
+- Tema gelap dengan aksen warna resmi universitas, penanganan *safe area* untuk
+  mode *edge-to-edge*, serta label aksesibilitas pada seluruh kontrol.
+
+## Yang Diperbaiki pada Desain Ulang
+
+Versi sebelumnya berupa satu berkas `App.js` sepanjang 1.172 baris. Berikut
+perubahan yang dikerjakan pada desain ulang ini.
+
+### Keamanan
+
+| Sebelum | Sesudah |
+| --- | --- |
+| `Math.random()` sebagai sumber acak — keluarannya dapat diprediksi dan tidak layak untuk rahasia | `expo-crypto` yang memakai penyedia acak sistem operasi |
+| Indeks karakter diambil dari bilangan pecahan `Math.random()` | Indeks diturunkan dari bilangan bulat 32-bit dengan *rejection sampling*, agar ukuran pool yang tidak membagi habis 2³² tidak menimbulkan bias modulo |
+
+### Cacat fungsional
+
+- **Dua tombol dengan fungsi identik.** `EXECUTE GENERATE` dan
+  `RE-GENERATE SOURCE` memanggil `handleGenerate(true)` yang sama persis;
+  kini disatukan menjadi satu tombol **Acak Ulang**.
+- **Rentang panjang seragam untuk semua tipe.** PIN dipaksa minimal 8 digit dan
+  token bisa mencapai 64 karakter. Setiap tipe kini punya rentangnya sendiri,
+  dan panjang menyesuaikan otomatis saat tipe diganti.
+- **Tipe entri riwayat ditebak dengan regex.** Kata sandi yang kebetulan
+  seluruhnya angka dinilai sebagai PIN sehingga kekuatannya salah hitung. Tipe
+  kini disimpan bersama entrinya.
+- **Keadaan "semua kategori mati"** menghasilkan layar galat dan tombol yang
+  dinonaktifkan. Keadaan itu kini mustahil terjadi, sehingga seluruh jalur kode
+  penanganannya dapat dihapus.
+- **Skor kekuatan ad-hoc** (maksimum 7 poin dari panjang dan ragam karakter)
+  tidak mencerminkan ketahanan sesungguhnya, dan token tidak pernah bisa
+  bernilai Lemah. Diganti perhitungan entropi.
+
+### Antarmuka dan platform
+
+- `Alert` modal setiap kali menyalin diganti notifikasi ringkas beranimasi yang
+  tidak memutus alur kerja.
+- Padding bilah status yang dihitung manual (`Platform.OS === 'ios' ? 50 : ...`)
+  diganti `react-native-safe-area-context`, sesuai mode *edge-to-edge* yang
+  berlaku pada Expo SDK 56.
+- Prop `backgroundColor` pada `StatusBar` dihapus karena tidak lagi didukung
+  pada SDK 56.
+- Warna splash dan ikon adaptif di `app.json` diselaraskan dengan latar tema
+  baru.
+- Antarmuka bertema terminal berbahasa Inggris (`SYSTEM_KEY_READOUT`,
+  `DECRYPTION DEFENSE METRICS`) diganti tata letak berbahasa Indonesia yang
+  konsisten dengan dokumentasi proyek.
+
+### Struktur kode
+
+`App.js` yang berisi logika, antarmuka, dan gaya sekaligus dipecah menjadi
+lapisan terpisah: logika murni di `src/lib`, state di `src/hooks`, tampilan di
+`src/components` dan `src/screens`, serta token desain di `src/theme.js`.
+Pemisahan ini membuat logika pembangkitan dapat diuji tanpa merender komponen.
 
 ## Teknologi
 
@@ -48,6 +129,10 @@ npm start            # jalankan Metro bundler (Expo)
 npm run android      # bangun & jalankan di perangkat/emulator Android
 npm run ios          # bangun & jalankan di perangkat/simulator iOS
 ```
+
+Proyek memakai modul native (`expo-crypto`, `expo-haptics`,
+`react-native-safe-area-context`), sehingga perubahan dependensi memerlukan
+build ulang native — memuat ulang Metro saja tidak cukup.
 
 ## Struktur
 
