@@ -15,6 +15,21 @@ import { StatusBar } from 'expo-status-bar';
 import * as Clipboard from 'expo-clipboard';
 import Slider from '@react-native-community/slider';
 
+// Palet resmi Universitas Insan Mahardika.
+// Warna utama aplikasi ini mengikuti Program Studi Informatika (kuning emas).
+// Varian "Terang" adalah versi lebih cerah dari warna resmi, dipakai untuk teks
+// dan garis di atas latar gelap agar tetap terbaca.
+const BRAND = {
+  informatika: '#F0B90B', // Informatika — warna utama
+  informatikaTerang: '#FFD75E',
+  fmt: '#FB7A1E', // FMT — kekuatan sandi sedang
+  fkes: '#7ED957', // FKES — kekuatan sandi kuat
+  rmikTerang: '#E85555', // RMIK (dicerahkan) — kekuatan sandi lemah
+  kesmasTerang: '#8B5BD6', // KESMAS (dicerahkan) — aksen sekunder
+  tinta: '#030712',
+  putih: '#FFFFFF',
+};
+
 // Mendapatkan dimensi layar untuk styling yang responsif
 const { width } = Dimensions.get('window');
 
@@ -283,12 +298,12 @@ export default function App() {
   const getStrengthColor = () => {
     switch (strength) {
       case 'Strong':
-        return '#00FF9D'; // Hijau Neon
+        return BRAND.fkes; // Hijau Neon
       case 'Medium':
-        return '#FFD60A'; // Kuning Neon
+        return BRAND.fmt; // Kuning Neon
       case 'Weak':
       default:
-        return '#FF4D6D'; // Merah Neon
+        return BRAND.rmikTerang; // Merah Neon
     }
   };
 
@@ -409,9 +424,9 @@ export default function App() {
             value={displayLength}
             onValueChange={(val) => setDisplayLength(val)}
             onSlidingComplete={(val) => setPasswordLength(val)}
-            minimumTrackTintColor="#00E5FF"
+            minimumTrackTintColor={BRAND.informatika}
             maximumTrackTintColor="#1F2937"
-            thumbTintColor="#00E5FF"
+            thumbTintColor={BRAND.informatika}
             style={styles.slider}
           />
           <View style={styles.sliderRangeContainer}>
@@ -452,8 +467,8 @@ export default function App() {
               value={includeLowercase}
               onValueChange={(val) => setIncludeLowercase(val)}
               disabled={passwordType !== 'password'}
-              trackColor={{ false: '#1F2937', true: 'rgba(0, 229, 255, 0.4)' }}
-              thumbColor={includeLowercase ? '#00E5FF' : '#64748B'}
+              trackColor={{ false: '#1F2937', true: 'rgba(240, 185, 11, 0.4)' }}
+              thumbColor={includeLowercase ? BRAND.informatika : '#64748B'}
             />
           </View>
 
@@ -471,8 +486,8 @@ export default function App() {
               value={includeUppercase}
               onValueChange={(val) => setIncludeUppercase(val)}
               disabled={passwordType !== 'password'}
-              trackColor={{ false: '#1F2937', true: 'rgba(0, 229, 255, 0.4)' }}
-              thumbColor={includeUppercase ? '#00E5FF' : '#64748B'}
+              trackColor={{ false: '#1F2937', true: 'rgba(240, 185, 11, 0.4)' }}
+              thumbColor={includeUppercase ? BRAND.informatika : '#64748B'}
             />
           </View>
 
@@ -490,8 +505,8 @@ export default function App() {
               value={includeNumbers}
               onValueChange={(val) => setIncludeNumbers(val)}
               disabled={passwordType !== 'password'}
-              trackColor={{ false: '#1F2937', true: 'rgba(0, 229, 255, 0.4)' }}
-              thumbColor={includeNumbers ? '#00E5FF' : '#64748B'}
+              trackColor={{ false: '#1F2937', true: 'rgba(240, 185, 11, 0.4)' }}
+              thumbColor={includeNumbers ? BRAND.informatika : '#64748B'}
             />
           </View>
 
@@ -509,8 +524,8 @@ export default function App() {
               value={includeSymbols}
               onValueChange={(val) => setIncludeSymbols(val)}
               disabled={passwordType !== 'password'}
-              trackColor={{ false: '#1F2937', true: 'rgba(0, 229, 255, 0.4)' }}
-              thumbColor={includeSymbols ? '#00E5FF' : '#64748B'}
+              trackColor={{ false: '#1F2937', true: 'rgba(240, 185, 11, 0.4)' }}
+              thumbColor={includeSymbols ? BRAND.informatika : '#64748B'}
             />
           </View>
         </View>
@@ -595,8 +610,8 @@ export default function App() {
               const itemStrength = calculateStrength(item, item.includes('-') ? 'token' : /^\d+$/.test(item) ? 'pin' : 'password');
               
               const itemColor = 
-                itemStrength === 'Strong' ? '#00FF9D' :
-                itemStrength === 'Medium' ? '#FFD60A' : '#FF4D6D';
+                itemStrength === 'Strong' ? BRAND.fkes :
+                itemStrength === 'Medium' ? BRAND.fmt : BRAND.rmikTerang;
 
               return (
                 <View key={item}>
@@ -655,8 +670,8 @@ const styles = StyleSheet.create({
   headerTag: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'rgba(0, 255, 157, 0.1)',
-    borderColor: 'rgba(0, 255, 157, 0.25)',
+    backgroundColor: 'rgba(126, 217, 87, 0.1)',
+    borderColor: 'rgba(126, 217, 87, 0.25)',
     borderWidth: 1,
     borderRadius: 12,
     paddingVertical: 4,
@@ -667,13 +682,13 @@ const styles = StyleSheet.create({
     width: 6,
     height: 6,
     borderRadius: 3,
-    backgroundColor: '#00FF9D',
+    backgroundColor: BRAND.fkes,
     marginRight: 6,
   },
   headerTagText: {
     fontSize: 9,
     fontWeight: 'bold',
-    color: '#00FF9D',
+    color: BRAND.fkes,
     letterSpacing: 1.5,
   },
   headerTitle: {
@@ -681,12 +696,12 @@ const styles = StyleSheet.create({
     fontWeight: '900',
     color: '#FFFFFF',
     letterSpacing: 6,
-    textShadowColor: 'rgba(139, 92, 246, 0.5)',
+    textShadowColor: 'rgba(139, 91, 214, 0.5)',
     textShadowOffset: { width: 0, height: 0 },
     textShadowRadius: 8,
   },
   headerCursor: {
-    color: '#00E5FF',
+    color: BRAND.informatika,
   },
   headerSubtitle: {
     fontSize: 10,
@@ -705,12 +720,12 @@ const styles = StyleSheet.create({
   headerLine: {
     flex: 4,
     height: 1,
-    backgroundColor: 'rgba(139, 92, 246, 0.2)',
+    backgroundColor: 'rgba(139, 91, 214, 0.2)',
   },
   headerLineAccent: {
     flex: 1,
     height: 2,
-    backgroundColor: '#00E5FF',
+    backgroundColor: BRAND.informatika,
     marginLeft: 4,
   },
 
@@ -724,8 +739,8 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   glowCard: {
-    borderColor: 'rgba(0, 229, 255, 0.3)',
-    shadowColor: '#00E5FF',
+    borderColor: 'rgba(240, 185, 11, 0.3)',
+    shadowColor: BRAND.informatika,
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 0.15,
     shadowRadius: 6,
@@ -786,7 +801,7 @@ const styles = StyleSheet.create({
     height: 6,
     borderTopWidth: 1.5,
     borderLeftWidth: 1.5,
-    borderColor: '#00E5FF',
+    borderColor: BRAND.informatika,
   },
   cardDecorationBR: {
     position: 'absolute',
@@ -796,7 +811,7 @@ const styles = StyleSheet.create({
     height: 6,
     borderBottomWidth: 1.5,
     borderRightWidth: 1.5,
-    borderColor: '#00E5FF',
+    borderColor: BRAND.informatika,
   },
   passwordText: {
     fontSize: 18,
@@ -811,7 +826,7 @@ const styles = StyleSheet.create({
   },
   errorText: {
     fontSize: 11,
-    color: '#FF4D6D',
+    color: BRAND.rmikTerang,
     fontWeight: 'bold',
     letterSpacing: 1,
     textAlign: 'center',
@@ -823,8 +838,8 @@ const styles = StyleSheet.create({
 
   // Action Button dalam output card
   copyButton: {
-    backgroundColor: 'rgba(0, 229, 255, 0.1)',
-    borderColor: '#00E5FF',
+    backgroundColor: 'rgba(240, 185, 11, 0.1)',
+    borderColor: BRAND.informatika,
     borderWidth: 1,
     borderRadius: 6,
     paddingVertical: 12,
@@ -832,7 +847,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   copyButtonText: {
-    color: '#00E5FF',
+    color: BRAND.informatika,
     fontWeight: 'bold',
     fontSize: 13,
     letterSpacing: 1.5,
@@ -842,7 +857,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 10,
     fontWeight: 'bold',
-    color: '#8B5CF6',
+    color: BRAND.kesmasTerang,
     letterSpacing: 2,
     marginBottom: 8,
     marginTop: 6,
@@ -865,8 +880,8 @@ const styles = StyleSheet.create({
     borderRadius: 4,
   },
   segmentButtonActive: {
-    backgroundColor: '#8B5CF6',
-    shadowColor: '#8B5CF6',
+    backgroundColor: BRAND.kesmasTerang,
+    shadowColor: BRAND.kesmasTerang,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.3,
     shadowRadius: 4,
@@ -896,7 +911,7 @@ const styles = StyleSheet.create({
   lengthValue: {
     fontSize: 15,
     fontWeight: 'bold',
-    color: '#00E5FF',
+    color: BRAND.informatika,
     ...Platform.select({
       ios: { fontFamily: 'Courier' },
       android: { fontFamily: 'monospace' },
@@ -963,7 +978,7 @@ const styles = StyleSheet.create({
     zIndex: 10,
   },
   lockText: {
-    color: '#FFD60A',
+    color: BRAND.fmt,
     fontWeight: 'bold',
     fontSize: 10,
     letterSpacing: 1,
@@ -987,8 +1002,8 @@ const styles = StyleSheet.create({
     color: '#E2E8F0',
   },
   neonTextBlue: {
-    color: '#00E5FF',
-    textShadowColor: 'rgba(0, 229, 255, 0.4)',
+    color: BRAND.informatika,
+    textShadowColor: 'rgba(240, 185, 11, 0.4)',
     textShadowOffset: { width: 0, height: 0 },
     textShadowRadius: 4,
   },
@@ -1005,15 +1020,15 @@ const styles = StyleSheet.create({
 
   // Error Banner
   errorBanner: {
-    backgroundColor: 'rgba(255, 77, 109, 0.08)',
+    backgroundColor: 'rgba(232, 85, 85, 0.08)',
     borderWidth: 1,
-    borderColor: '#FF4D6D',
+    borderColor: BRAND.rmikTerang,
     borderRadius: 6,
     padding: 12,
     marginBottom: 20,
   },
   errorBannerText: {
-    color: '#FF4D6D',
+    color: BRAND.rmikTerang,
     fontSize: 11,
     fontWeight: 'bold',
     textAlign: 'center',
@@ -1053,20 +1068,22 @@ const styles = StyleSheet.create({
     marginBottom: 24,
   },
   primaryBtn: {
-    backgroundColor: '#8B5CF6',
+    // Tombol aksi utama memakai kuning Informatika sebagai warna utama merek
+    backgroundColor: BRAND.informatika,
     borderRadius: 6,
     paddingVertical: 15,
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: 12,
-    shadowColor: '#8B5CF6',
+    shadowColor: BRAND.informatika,
     shadowOffset: { width: 0, height: 3 },
     shadowOpacity: 0.3,
     shadowRadius: 5,
     elevation: 4,
   },
   primaryBtnText: {
-    color: '#FFFFFF',
+    // Teks gelap di atas kuning agar kontrasnya tetap tinggi
+    color: BRAND.tinta,
     fontWeight: 'bold',
     fontSize: 14,
     letterSpacing: 2,
@@ -1075,13 +1092,13 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(17, 24, 39, 0.8)',
     borderRadius: 6,
     borderWidth: 1,
-    borderColor: '#00E5FF',
+    borderColor: BRAND.informatika,
     paddingVertical: 15,
     alignItems: 'center',
     justifyContent: 'center',
   },
   secondaryBtnText: {
-    color: '#00E5FF',
+    color: BRAND.informatika,
     fontWeight: 'bold',
     fontSize: 14,
     letterSpacing: 2,
@@ -1118,7 +1135,7 @@ const styles = StyleSheet.create({
   },
   historyNumber: {
     fontSize: 11,
-    color: '#8B5CF6',
+    color: BRAND.kesmasTerang,
     marginRight: 10,
     fontWeight: 'bold',
     ...Platform.select({
