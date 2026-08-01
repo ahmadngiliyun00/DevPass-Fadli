@@ -12,7 +12,7 @@
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#030712"
+        "backgroundColor": "#0B0D10"
       },
       "package": "ac.id.mahardika.devpass"
     },
@@ -27,10 +27,11 @@
         {
           "image": "./assets/splash-icon.png",
           "resizeMode": "contain",
-          "backgroundColor": "#030712"
+          "backgroundColor": "#0B0D10"
         }
       ]
     ],
-    "primaryColor": "#F0B90B"
+    "primaryColor": "#F0B90B",
+    "backgroundColor": "#0B0D10"
   }
 }
